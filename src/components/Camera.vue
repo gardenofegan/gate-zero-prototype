@@ -21,9 +21,9 @@
       
       <div class="camera-shutter" :class="{'flash' : isShotPhoto}"></div>
         
-      <video v-show="!isPhotoTaken" ref="camera" :width="568" :height="320" autoplay></video>
+      <video v-show="!isPhotoTaken" ref="camera" :width="700" :height="394" autoplay></video>
       
-      <canvas v-show="isPhotoTaken" id="photoTaken" ref="canvas" :width="568" :height="320"></canvas>
+      <canvas v-show="isPhotoTaken" id="photoTaken" ref="canvas" :width="700" :height="394"></canvas>
     </div>
     
     <!-- <div v-if="isCameraOpen && !isCameraLoading" class="camera-shoot">
@@ -157,7 +157,7 @@
 
           
           const context = this.$refs.canvas.getContext('2d');
-          context.drawImage(this.$refs.camera, 0, 0, 568, 320);
+          context.drawImage(this.$refs.camera, 0, 0, 700, 394);
         },
         
         downloadImage() {
@@ -186,7 +186,7 @@
   .close-camera {
     position: absolute;
     z-index: 105;
-    bottom: 20px;
+    bottom: 100px;
     left: 20px;
   }
   
