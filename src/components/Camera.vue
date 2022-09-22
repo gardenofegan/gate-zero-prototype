@@ -94,23 +94,39 @@
             this.createCameraElement();
           }
         },
+
+      
         
         createCameraElement() {
           this.mutateCameraLoading(true);
+
+          let getFacingMode = 'environment';
           
-          const constraints = (window.constraints = {
-            audio: false,
-            video: true
+          navigator.mediaDevices.enumerateDevices().then(devices => {
+              if (devices.filter(device => device.kind === 'videoinput').length > 1) {
+                getFacingMode = 'environment';
+              } else {
+                getFacingMode = 'user';
+              }
           });
+          
+          // const constraints = (window.constraints = {
+          //   audio: false,
+          //   video: true
+          // });
 
+          const constraints = {
+            audio: false,
+            video: { facingMode: getFacingMode }
+          };
 
+        
+          
           navigator.mediaDevices
             .getUserMedia(constraints)
             .then(stream => {
               this.mutateCameraLoading(false);
-              this.$nextTick(() => {
-                this.$refs.camera.srcObject = stream;
-              });
+              this.$refs.camera.srcObject = stream;
             })
             .catch(() => {
               this.mutateCameraLoading(false);
