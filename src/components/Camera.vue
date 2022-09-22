@@ -1,13 +1,15 @@
 <template>
-  <div id="app" class="web-camera-container">
+  <div class="web-camera-container" ref="maincontainer">
     <div class="camera-button">
-      <v-btn type="button" class="button is-rounded" :class="{ 'primary' : !isCameraOpen, 'red white--text' : isCameraOpen}" @click="toggleCamera">
-        <span v-if="!isCameraOpen">Start Camera</span>
-        <span v-else>Close Camera</span>
+      <v-btn v-show="!isCameraOpen" type="button" x-large class="button is-rounded primary" @click="toggleCamera">
+        <v-icon color="white" x-large class="mr-1">mdi-camera</v-icon> Start Camera
+      </v-btn>
+      <v-btn v-show="isCameraOpen" x-large color="red white--text" class="close-camera" @click="toggleCamera">
+        Close Camera
       </v-btn>
     </div>
     
-    <div v-show="isCameraOpen && isLoading" class="camera-loading">
+    <div v-show="isCameraOpen && isCameraLoading" class="camera-loading">
       <ul class="loader-circle">
         <li></li>
         <li></li>
@@ -15,56 +17,86 @@
       </ul>
     </div>
     
-    <div v-if="isCameraOpen" v-show="!isLoading" class="camera-box" :class="{ 'flash' : isShotPhoto }">
+    <div v-if="isCameraOpen" v-show="!isCameraLoading" class="camera-box" :class="{ 'flash' : isShotPhoto }">
       
       <div class="camera-shutter" :class="{'flash' : isShotPhoto}"></div>
         
-      <video v-show="!isPhotoTaken" ref="camera" :width="450" :height="337.5" autoplay></video>
+      <video v-show="!isPhotoTaken" ref="camera" :width="1280" :height="720" autoplay></video>
       
-      <canvas v-show="isPhotoTaken" id="photoTaken" ref="canvas" :width="450" :height="337.5"></canvas>
+      <canvas v-show="isPhotoTaken" id="photoTaken" ref="canvas" :width="1000" :height="562"></canvas>
     </div>
     
-    <div v-if="isCameraOpen && !isLoading" class="camera-shoot">
-      <button type="button" class="button" @click="takePhoto">
-        <img src="https://img.icons8.com/material-outlined/50/000000/camera--v2.png">
-      </button>
-    </div>
+    <!-- <div v-if="isCameraOpen && !isCameraLoading" class="camera-shoot">
+      <v-btn x-large color="primary" @click="takePhoto">
+        <v-icon x-large>mdi-camera</v-icon> Take Photo
+      </v-btn>
+    </div> -->
     
-    <div v-if="isPhotoTaken && isCameraOpen" class="camera-download">
-      <a id="downloadPhoto" download="my-photo.jpg" class="button" role="button" @click="downloadImage">
-        Download
-      </a>
-    </div>
   </div>
 </template>
 
 <script>
+  import { mapState, mapMutations} from 'vuex'
+  import { eventBus } from '@/main'
+
   export default {
     name: 'Camera',
+    
+    computed: {
+    
+    ... mapState({
+      // arrow functions can make the code very succinct!
+      count: state => state.count,
+      isCameraOpen: state => state.isCameraOpen,
+      isPhotoTaken: state => state.isPhotoTaken,
+      isShotPhoto: state => state.isShotPhoto,
+      isCameraLoading: state => state.isCameraLoading,
+    }),
+    
+  },
+
+  created (){
+    eventBus.$on('takePhotoNow', () => {
+      this.takePhoto();
+    })
+  },
 
     data: () => ({
-      isCameraOpen: false,
-      isPhotoTaken: false,
-      isShotPhoto: false,
-      isLoading: false,
       link: '#',
     }),
 
       methods: {
+        ...mapMutations([
+
+          // `mapMutations` also supports payloads:
+          'mutateCameraOpen',
+          'mutatePhotoTaken',
+          'mutateShotPhoto',
+          'mutateCameraLoading',
+          // map `this.incrementBy(amount)` to `this.$store.commit('incrementBy', amount)`
+        ]),
+
+        getHeight() {
+          this.$refs.maincontainer.clientHeight - 130;
+        },
+        getWidth() {
+          this.$refs.maincontainer.clientWidth - 512;
+        },
+        
         toggleCamera() {
           if(this.isCameraOpen) {
-            this.isCameraOpen = false;
-            this.isPhotoTaken = false;
-            this.isShotPhoto = false;
+            this.mutateCameraOpen(false);
+            this.mutatePhotoTaken(false);
+            this.mutateShotPhoto(false);
             this.stopCameraStream();
           } else {
-            this.isCameraOpen = true;
+            this.mutateCameraOpen(true);
             this.createCameraElement();
           }
         },
         
         createCameraElement() {
-          this.isLoading = true;
+          this.mutateCameraLoading(true);
           
           const constraints = (window.constraints = {
             audio: false,
@@ -75,11 +107,13 @@
           navigator.mediaDevices
             .getUserMedia(constraints)
             .then(stream => {
-              this.isLoading = false;
-              this.$refs.camera.srcObject = stream;
+              this.mutateCameraLoading(false);
+              this.$nextTick(() => {
+                this.$refs.camera.srcObject = stream;
+              });
             })
             .catch(() => {
-              this.isLoading = false;
+              this.mutateCameraLoading(false);
               alert("Browser didn't support or there is some errors.");
             });
         },
@@ -94,19 +128,20 @@
         
         takePhoto() {
           if(!this.isPhotoTaken) {
-            this.isShotPhoto = true;
+            this.mutateShotPhoto(true);
 
             const FLASH_TIMEOUT = 50;
 
             setTimeout(() => {
-              this.isShotPhoto = false;
+              this.mutateShotPhoto(false);
             }, FLASH_TIMEOUT);
           }
           
-          this.isPhotoTaken = !this.isPhotoTaken;
+          this.mutatePhotoTaken(!this.isPhotoTaken);
+
           
           const context = this.$refs.canvas.getContext('2d');
-          context.drawImage(this.$refs.camera, 0, 0, 450, 337.5);
+          context.drawImage(this.$refs.camera, 0, 0, 1280, 720);
         },
         
         downloadImage() {
@@ -116,38 +151,38 @@
           download.setAttribute("href", canvas);
         }
   }
+    
   }
 </script>
 
 
 <style lang="scss" scoped>
-body {
-  display: flex;
-  justify-content: center;
-}
-
 .web-camera-container {
-  margin-top: 2rem;
-  margin-bottom: 2rem;
-  padding: 2rem;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  width: 500px;
+  height: calc(100vh - 130px);
+  width: calc(100vw - 512px);
+  position: relative;
 
+
+  .close-camera {
+    position: absolute;
+    z-index: 105;
+    bottom: 20px;
+    left: 20px;
+  }
   
   .camera-button {
-    margin-bottom: 2rem;
+    // margin-bottom: 2rem;
   }
   
   .camera-box {    
     .camera-shutter {
       opacity: 0;
-      width: 450px;
-      height: 337.5px;
+      height: calc(100vh - 130px);
+      width: calc(100vw - 512px);
       background-color: #fff;
       position: absolute;
       
@@ -156,23 +191,18 @@ body {
       }
     }
   }
+
+  .download-photo {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+  }
   
   .camera-shoot {
-    margin: 1rem 0;
-    
-    button {
-      height: 60px;
-      width: 60px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 100%;
-      
-      img {
-        height: 35px;
-        object-fit: cover;
-      }
-    }
+    position: absolute;
+    right: 20px;
+    bottom: 20px;
+    z-index: 105;
   }
   
   .camera-loading {
