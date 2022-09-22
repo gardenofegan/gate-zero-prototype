@@ -7,6 +7,10 @@ Vue.use(VueRouter)
 const routes = [
   {
     path: '/',
+    redirect: '/start',
+  },
+  {
+    path: '/start',
     name: 'Home',
     component: Home
   },
@@ -14,7 +18,8 @@ const routes = [
     path: '/inspection-start',
     name: 'Inspection Start',
     component: () => import(/* webpackChunkName: "inspectionStart" */ '../views/InspectionStart.vue')
-  }
+  },
+  { path: '*', redirect: '/' },
 ]
 
 const router = new VueRouter({
