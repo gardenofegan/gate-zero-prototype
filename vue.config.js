@@ -1,7 +1,5 @@
 module.exports = {
-  publicPath: process.env.NODE_ENV === 'production'
-    ? '/gate-zero-prototype/'
-    : '/',
+  publicPath: '',
   outputDir: 'docs',
   transpileDependencies: [
     'vuetify'

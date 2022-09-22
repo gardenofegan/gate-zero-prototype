@@ -203,7 +203,7 @@
 /******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
 /******/
 /******/ 	// __webpack_public_path__
-/******/ 	__webpack_require__.p = "/";
+/******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// on error function for async loading
 /******/ 	__webpack_require__.oe = function(err) { console.error(err); throw err; };
@@ -590,7 +590,7 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var regi
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ \"./node_modules/vue/dist/vue.runtime.esm.js\");\n/* harmony import */ var vue_router__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vue-router */ \"./node_modules/vue-router/dist/vue-router.esm.js\");\n/* harmony import */ var _views_Home_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../views/Home.vue */ \"./src/views/Home.vue\");\n\n\n\nvue__WEBPACK_IMPORTED_MODULE_0__[\"default\"].use(vue_router__WEBPACK_IMPORTED_MODULE_1__[\"default\"]);\nconst routes = [{\n  path: '/',\n  name: 'Home',\n  component: _views_Home_vue__WEBPACK_IMPORTED_MODULE_2__[\"default\"]\n}, {\n  path: '/inspection-start',\n  name: 'Inspection Start',\n  component: () => __webpack_require__.e(/*! import() | inspectionStart */ \"inspectionStart\").then(__webpack_require__.bind(null, /*! ../views/InspectionStart.vue */ \"./src/views/InspectionStart.vue\"))\n}];\nconst router = new vue_router__WEBPACK_IMPORTED_MODULE_1__[\"default\"]({\n  base: \"/\",\n  routes\n});\n/* harmony default export */ __webpack_exports__[\"default\"] = (router);\n\n//# sourceURL=webpack:///./src/router/index.js?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ \"./node_modules/vue/dist/vue.runtime.esm.js\");\n/* harmony import */ var vue_router__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vue-router */ \"./node_modules/vue-router/dist/vue-router.esm.js\");\n/* harmony import */ var _views_Home_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../views/Home.vue */ \"./src/views/Home.vue\");\n\n\n\nvue__WEBPACK_IMPORTED_MODULE_0__[\"default\"].use(vue_router__WEBPACK_IMPORTED_MODULE_1__[\"default\"]);\nconst routes = [{\n  path: '/',\n  redirect: '/start'\n}, {\n  path: '/start',\n  name: 'Home',\n  component: _views_Home_vue__WEBPACK_IMPORTED_MODULE_2__[\"default\"]\n}, {\n  path: '/inspection-start',\n  name: 'Inspection Start',\n  component: () => __webpack_require__.e(/*! import() | inspectionStart */ \"inspectionStart\").then(__webpack_require__.bind(null, /*! ../views/InspectionStart.vue */ \"./src/views/InspectionStart.vue\"))\n}, {\n  path: '*',\n  redirect: '/'\n}];\nconst router = new vue_router__WEBPACK_IMPORTED_MODULE_1__[\"default\"]({\n  base: \"\",\n  routes\n});\n/* harmony default export */ __webpack_exports__[\"default\"] = (router);\n\n//# sourceURL=webpack:///./src/router/index.js?");
 
 /***/ }),
 
